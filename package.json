@@ -1,0 +1,28 @@
+{
+  "name": "spartacli_rogue",
+  "version": "1.0.0",
+  "description": "스파르타 내일배움 캠프 로그라이크 개인 과제",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/artbiit/SpartaCLI_Rogue.git"
+  },
+  "author": "LJS",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/artbiit/SpartaCLI_Rogue/issues"
+  },
+  "homepage": "https://github.com/artbiit/SpartaCLI_Rogue#readme",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "figlet": "^1.7.0",
+    "readline-sync": "^1.4.10"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3"
+  }
+}
