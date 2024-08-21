@@ -1,44 +1,11 @@
 import chalk from 'chalk';
-import figlet from 'figlet';
-import readlineSync from 'readline-sync';
 import {startGame} from "./game.js";
 import TextTable from './lib/TextTable.js';
+import Input from './lib/Input.js';
 
 // 로비 화면을 출력하는 함수
 function displayLobby() {
     console.clear();
-
-    // // 타이틀 텍스트
-    // console.log(
-    //     chalk.cyan(
-    //         figlet.textSync('RL- Javascript', {
-    //             font: 'Standard',
-    //             horizontalLayout: 'default',
-    //             verticalLayout: 'default'
-    //         })
-    //     )
-    // );
-
-    // // 상단 경계선
-    // const line = chalk.magentaBright('='.repeat(50));
-    // console.log(line);
-
-    // // 게임 이름
-    // console.log(chalk.yellowBright.bold('CLI 게임에 오신것을 환영합니다!'));
-
-    // // 설명 텍스트
-    // console.log(chalk.green('옵션을 선택해주세요.'));
-    // console.log();
-
-    // // 옵션들
-    // console.log(chalk.blue('1.') + chalk.white(' 새로운 게임 시작'));
-    // console.log(chalk.blue('2.') + chalk.white(' 업적 확인하기'));
-    // console.log(chalk.blue('3.') + chalk.white(' 옵션'));
-    // console.log(chalk.blue('4.') + chalk.white(' 종료'));
-
-    // // 하단 경계선
-    // console.log(line);
-
     console.log( TextTable.FormatText("lobby_menu"));
 
     // 하단 설명
@@ -47,7 +14,7 @@ function displayLobby() {
 
 // 유저 입력을 받아 처리하는 함수
 function handleUserInput() {
-    const choice = readlineSync.question('입력: ');
+    const choice = Input.question('입력: ');
 
     switch (choice) {
         case '1':
