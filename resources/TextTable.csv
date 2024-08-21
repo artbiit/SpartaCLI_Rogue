@@ -1,0 +1,11 @@
+id,text
+attack_action, "공격"
+damage, "{orange:{{unit}}}가 {orange:{{target_unit}}}을 공격하여 {red:{{damage}}}만큼의 피해를 입혔습니다."
+encounter, "몬스터 {orange:{{name}}}가 출몰했다."
+double_attack_action, "연속공격"
+action_failed, "{blue:{{action_name}}}에 {red:실패}하였다."
+try_heal_action, "회복 시도"
+try_heal_result, "{orange:{{unit}}}의 {blue:회복 시도}가 {orange:{{success}}}하여 체력이 {{prev_hp}}에서 {{current_hp}}가 되었습니다."
+gambling_action, "도박",
+gambling_result, "도박에 {orange:{{success}}}하여 {red:victory}하였습니다!"
+lobby_menu, "{cyan:  ____    _      _                                _       _   } \n{cyan: |  _ \  | |    | |   __   ___     ____  _  ___   ___  _ __  (_)  _ __   | |_ } \n{cyan: | |_) | | |    _____   _ | |/ _`  \  \  /  / _`  / __|| __||  | | '__|  | __| }\n{cyan: |  _ < | |__ |_____ | | |_|  (_|  | \  V  / (_| | \__ \| (__| |  | |    | |_ }\n{cyan: |_| \_\_____|     \___/ \__,_| \_/\__,_|___/\___|_|  |_| |__/ \__|  }  \n{cyan:                                                   |_|  } \n==================================================\n{yellow:CLI 게임에 오신것을 환영합니다!}\n{green:옵션을 선택해주세요.}\n\n{blue:1. 새로운 게임 시작}\n{blue:2. 업적 확인하기}\n{blue:3. 옵션}\n{blue:4. 종료}\n=================================================="
