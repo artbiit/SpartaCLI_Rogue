@@ -33,12 +33,12 @@ class Action {
 
 /**해당 유닛의 1회 공격에 대한 데미지를 계산합니다. */
 function CalcAtk(unit){
-    return Math.floor(Math.random() * (unit.stats.atk_range.max_atk - unit.stats.atk_range.min_atk + 1)) + unit.stats.atk_range.min_atk;
+    return MyMath.RandomRangeInt(unit.stats.atk_range.min_atk, unit.stats.atk_range.max_atk+1);
 }
 
 /** 입력된 공격력을 토대로 피격 유닛의 방어력을 적용한 값을 계산합니다. */
 function CalcDamage(target_unit, atk){
-    return Math.floor(atk * (1.0 - target_unit.stats.defense_rating));
+    return (atk * (1.0 - target_unit.stats.defense_rating)) | 0;
 }
 
 /** 확률상 성공했는지 검사합니다. */
