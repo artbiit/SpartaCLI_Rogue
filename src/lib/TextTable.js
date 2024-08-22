@@ -10,13 +10,17 @@ class TextTable extends Singleton {
     this.#textTable = {};
   }
 
-  // CSV 파일을 비동기로 읽어오는 메서드
+  /** CSV를 읽어옵니다. 사용하기전에 이것을 먼저 해야합니다. */
   async Load(filePath) {
     return new Promise((resolve, reject) => {
       fs.createReadStream(filePath)
         .pipe(csv())
         .on('data', (row) => {
-          this.#textTable[row.id] = row.text.replace(/^"|"$/g, '');
+          try{
+          this.#textTable[row.id] = row.text.trim().replace(/^"|"$/g, '');
+        }catch{
+          console.error(row);
+        }
         })
         .on('end', () => {
         //  console.log('CSV file successfully processed.');
@@ -28,30 +32,33 @@ class TextTable extends Singleton {
     });
   }
 
-  // 텍스트를 포맷팅하고 색상 적용하는 메서드
+  /** id에 해당하는 텍스트를 포맷합니다. */
   FormatText(id, variables = {}) {
     if (!this.#textTable[id]) {
       return 'Text not found';
-    }
+  }
 
-    let text = this.#textTable[id];
+  let text = this.#textTable[id];
 
-    // 텍스트 내 변수 치환
-    for (let key in variables) {
-      text = text.replace(`{{${key}}}`, variables[key]);
-    }
+  // 텍스트 내 변수 치환
+  for (let key in variables) {
+      const variablePattern = new RegExp(`{{${key}}}`, 'g');
+      text = text.replace(variablePattern, variables[key]);
+  }
 
-    // 텍스트에서 색상 적용 부분 파싱 및 적용
-    text = text.replace(/{(.*?):(.*?)}/g, (match, color, content) => {
-      // 내용이 또 다른 변수일 경우 변수 치환
-      if (content in variables) {
-        content = variables[content];
-      }
-      // 색상 적용
+  // 텍스트에서 색상 적용 부분 파싱 및 적용
+  text = text.replace(/{(.*?):(.*?)}/gs, (match, color, content) => {
       return chalk[color](content);
-    });
+  });
 
-    return text.replace(/\\n/g, '\n');;
+  // \n을 실제 개행 문자로 처리
+  return text.replace(/\\n/g, '\n');
+}
+
+
+  /** 포맷후 바로 출력합니다. */
+  Output(id, variables = {}){
+    console.log(this.FormatText(id, variables));
   }
 }
 

@@ -1,68 +1,68 @@
-import readlineSync from 'readline-sync';
-import fs from 'fs';
-//OS에 따라선  readlineSync가 출력한 텍스트에 인코딩이 문제가 발생할 수 있으므로 따로 래핑했습니다.
+import readline from 'readline';
 
 class Input {
-    constructor() {
-      throw new Error('This class cannot be instantiated.');
-    }
-  
+  constructor() {
+    throw new Error('This class cannot be instantiated.');
+  }
 
-    static question(query, options) {
-      process.stdout.write(query); 
-      return readlineSync.question(query, options);
+  static async question(query) {
+    return await this._askQuestion(query);
+  }
+
+  static async questionInt(query) {
+    const answer = await this._askQuestion(query);
+    const intAnswer = parseInt(answer, 10);
+    if (isNaN(intAnswer)) {
+      throw new Error('Input is not a valid integer.');
     }
-  
-    static keyIn(query, options) {
-      process.stdout.write(query);
-      return readlineSync.keyIn('', options);
+    return intAnswer;
+  }
+
+  static async questionFloat(query) {
+    const answer = await this._askQuestion(query);
+    const floatAnswer = parseFloat(answer);
+    if (isNaN(floatAnswer)) {
+      throw new Error('Input is not a valid float.');
     }
-  
-    static questionInt(query, options) {
-      process.stdout.write(query);
-      return readlineSync.questionInt('', options);
-    }
-  
-    static questionFloat(query, options) {
-      process.stdout.write(query);
-      return readlineSync.questionFloat('', options);
-    }
-  
-    static questionNewPassword(query, options) {
-      process.stdout.write(query);
-      return readlineSync.questionNewPassword('', options);
-    }
-  
-    static keyInYN(query) {
-      process.stdout.write(query);
-      return readlineSync.keyInYN('');
-    }
-  
-    static keyInYNStrict(query) {
-      process.stdout.write(query);
-      return readlineSync.keyInYNStrict('');
-    }
-  
-    static keyInSelect(items, query, options) {
-      process.stdout.write(query);
-      return readlineSync.keyInSelect(items, '', options);
-    }
-  
-    static keyInPause(query) {
-      process.stdout.write(query);
-      return readlineSync.keyInPause('');
-    }
-  
-    static keyInContinue(query, options) {
-      process.stdout.write(query);
-      return readlineSync.keyInContinue('', options);
-    }
-  
-    static prompt(query, options) {
-      process.stdout.write(query);
-      return readlineSync.prompt('', options);
+    return floatAnswer;
+  }
+
+  static async keyInYN(query) {
+    const answer = await this._askQuestion(query);
+    return answer.toLowerCase() === 'y';
+  }
+
+  static async keyInYNStrict(query) {
+    const answer = await this._askQuestion(query);
+    if (answer.toLowerCase() === 'y' || answer.toLowerCase() === 'n') {
+      return answer.toLowerCase() === 'y';
+    } else {
+      throw new Error('Input must be Y or N.');
     }
   }
-  
+
+  static async keyInSelect(items, query) {
+    const answer = await this._askQuestion(query + items.join(', ') + ': ');
+    const index = parseInt(answer, 10);
+    if (index >= 0 && index < items.length) {
+      return index;
+    }
+    return -1;
+  }
+
+  static _askQuestion(query) {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+
+    return new Promise((resolve) => {
+      rl.question(query, (answer) => {
+        rl.close();
+        resolve(answer);
+      });
+    });
+  }
+}
 
 export default Input;

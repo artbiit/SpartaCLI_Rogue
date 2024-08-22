@@ -1,51 +1,43 @@
-import chalk from 'chalk';
 import {startGame} from "./game.js";
 import TextTable from './lib/TextTable.js';
 import Input from './lib/Input.js';
+import Command from './lib/Command.js';
+import Utils from './lib/Utils.js';
 
+let continued = true;
+const menus = new  Command();
+menus.AddCommand("시작하기", startGame);
+menus.AddCommand("업적보기", () => {TextTable.Output('not_allow');});
+menus.AddCommand("옵션설정", () => {TextTable.Output('not_allow');});
+menus.AddCommand("게임종료",  () => {continued = false;})
 // 로비 화면을 출력하는 함수
 function displayLobby() {
     console.clear();
-    console.log( TextTable.FormatText("lobby_menu"));
+    const menu_list = Array.from(menus.keys).join("\n");
+    TextTable.Output("lobby_menu", {menu_list});
 
-    // 하단 설명
-    console.log(chalk.gray('1-4 사이의 수를 입력한 뒤 엔터를 누르세요.'));
 }
 
 // 유저 입력을 받아 처리하는 함수
-function handleUserInput() {
-    const choice = Input.question('입력: ');
+async function handleUserInput() {
+  
+    while(continued){
+        displayLobby();
+        const text = TextTable.FormatText('input');
+        const choice = await Input.question(text);
+        if(menus.ExecuteCommand(choice)){
 
-    switch (choice) {
-        case '1':
-            console.log(chalk.green('게임을 시작합니다.'));
-            // 여기에서 새로운 게임 시작 로직을 구현
-            startGame();
-            break;
-        case '2':
-            console.log(chalk.yellow('구현 준비중입니다.. 게임을 시작하세요'));
-            // 업적 확인하기 로직을 구현
-            handleUserInput();
-            break;
-        case '3':
-            console.log(chalk.blue('구현 준비중입니다.. 게임을 시작하세요'));
-            // 옵션 메뉴 로직을 구현
-            handleUserInput();
-            break;
-        case '4':
-            console.log(chalk.red('게임을 종료합니다.'));
-            // 게임 종료 로직을 구현
-            process.exit(0); // 게임 종료
-            break;
-        default:
-            console.log(chalk.red('올바른 선택을 하세요.'));
-            handleUserInput(); // 유효하지 않은 입력일 경우 다시 입력 받음
+        }else{
+            TextTable.Output('wrong_select')
+        }
+    await Utils.delay(2000);
+
     }
 }
 
 // 게임 시작 함수
 function start() {
-    displayLobby();
+    continued = true;
     handleUserInput();
 }
 
