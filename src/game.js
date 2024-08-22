@@ -26,7 +26,7 @@ function displayStatus(stage, player, monster) {
     monster_luck : (monster.stats.luck * 100.0 ).toFixed(2)
 });
 
-console.log(Utils.FormatTextForConsole(text));
+console.log(TextTable.FormatTextForConsole(text));
 
 }
 

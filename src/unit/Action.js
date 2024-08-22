@@ -43,7 +43,7 @@ function CalcDamage(target_unit, atk){
 
 /** 확률상 성공했는지 검사합니다. */
 function CalcProbability(probability , unit){
-    return MyMath.Random01() < (probability - unit.stats.luck / 100.0);
+    return MyMath.Random01() < (probability - unit.stats.luck);
 }
 
 class AttackAction extends Action {
