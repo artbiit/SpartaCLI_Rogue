@@ -18,10 +18,26 @@ class MyMath{
     }
 
     /** 0~1 사이로 값을 반환합니다. */
-    static RandomFloat() {
+    static Random01() {
         const randomBytes = crypto.randomBytes(4);
         const randomNumber = randomBytes.readUInt32BE(0);
         return randomNumber / 0xFFFFFFFF;
+    }
+
+    /** min ~ max 사이로 값을 반환합니다. */
+    static RandomRange(min = Number.MIN_VALUE, max = Number.MAX_VALUE){
+        if(min > max){
+            const tmp = min;
+            min = max;
+            max = tmp;
+        }
+
+        return this.Random01() * (max - min)+ min;
+    }
+
+    /** 소수점을 제거하고 반환합니다. */
+    static RandomRangeInt(min = Number.MIN_VALUE, max = Number.MAX_VALUE){
+        return this.RandomRange(min, max) | 0;
     }
 }
 

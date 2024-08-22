@@ -1,5 +1,5 @@
-import TextTable from '../lib/TextTable';
-import MyMath from '../lib/MyMath';
+import TextTable from '../lib/TextTable.js';
+import MyMath from '../lib/MyMath.js';
 
 const ACTION_FAILED = 'action_failed';
 /**행동의 기본틀 DoAction에서 false 반환시 전투 종료다. */
@@ -43,7 +43,7 @@ function CalcDamage(target_unit, atk){
 
 /** 확률상 성공했는지 검사합니다. */
 function CalcProbability(probability , unit){
-    return MyMath.RandomFloat() < (probability - unit.stats.luck / 100.0);
+    return MyMath.Random01() < (probability - unit.stats.luck / 100.0);
 }
 
 class AttackAction extends Action {
@@ -107,17 +107,17 @@ class GamblingAction extends Action{
 
     DoAction(unit, target_unit){
         const success = CalcProbability(this._probability, unit);
-        const success_text = success ? '성공' : '실패';
-        const victory_text = success ? '승리' : '패배';
-        const text = TextTable.FormatText(this.description, {success: success_text, victory: victory_text });
         console.log(text);
         if(success){
+            TextTable.Output('gambling_success' );
             target_unit.stats.modifyCurrentHP(Number.MIN_SAFE_INTEGER);
         } else {
-            unit.stats.modifyCurrentHP(Number.MIN_SAFE_INTEGER);
+            TextTable.Output('gambling_failed' );
+         //   unit.stats.modifyCurrentHP(Number.MIN_SAFE_INTEGER);
+         
         }
         return false;
     }
 }
 
-module.exports = {AttackAction, DoubleAttackAction, TryHealAction, GamblingAction};
+export {Action, AttackAction, DoubleAttackAction, TryHealAction, GamblingAction };

@@ -1,12 +1,15 @@
 import readline from 'readline';
 
+let createdReads = {};
+
 class Input {
   constructor() {
     throw new Error('This class cannot be instantiated.');
   }
 
   static async question(query) {
-    return await this._askQuestion(query);
+    let text = await this._askQuestion(query);
+    return text;
   }
 
   static async questionInt(query) {
@@ -53,16 +56,36 @@ class Input {
   static _askQuestion(query) {
     const rl = readline.createInterface({
       input: process.stdin,
-      output: process.stdout
+      output: process.stdout,
+      terminal: true 
     });
 
+    createdReads[query] = rl;
     return new Promise((resolve) => {
       rl.question(query, (answer) => {
+      delete  createdReads[query];
         rl.close();
         resolve(answer);
       });
     });
   }
+
+  
 }
 
+process.on('exit', () => {
+  AllClose();
+});
+
+process.on('SIGINT', () => {
+  AllClose();
+  process.exit();
+});
+
+function AllClose(){
+  for(const key in createdReads){
+    createdReads[key].close();
+  }
+  createdReads = {};
+}
 export default Input;

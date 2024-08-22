@@ -17,7 +17,7 @@ class TextTable extends Singleton {
         .pipe(csv())
         .on('data', (row) => {
           try{
-          this.#textTable[row.id] = row.text.trim().replace(/^"|"$/g, '').replace(/\\n/g, '\n');;
+          this.#textTable[row.id] = row.text.trim().replace(/^"|"$/g, '').replace(/\\n/g, '\n').replace(/\\t/g, '\t');
         }catch{
           console.error(row);
         }

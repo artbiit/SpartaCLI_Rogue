@@ -39,11 +39,11 @@ class Command {
     }
 
     /** 해당 명령어를 실행합니다. */
-    ExecuteCommand(key, ...args) {
+   async  ExecuteCommand(key, ...args) {
         const command = this.#commands.get(key);
         if (command) {
             try {
-                command(...args);
+              await  command(...args);
                 return true;
             } catch (error) {
                 throw new Error(`Error executing command "${key}":`, error);

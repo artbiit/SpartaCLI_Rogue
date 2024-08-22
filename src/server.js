@@ -7,9 +7,9 @@ import Utils from './lib/Utils.js';
 let continued = true;
 const menus = new  Command();
 menus.AddCommand("시작하기", startGame);
-menus.AddCommand("업적보기", () => {TextTable.Output('not_allow');});
-menus.AddCommand("옵션설정", () => {TextTable.Output('not_allow');});
-menus.AddCommand("게임종료", () => {TextTable.Output('game_exit');  continued = false;})
+menus.AddCommand("업적보기",async () => {TextTable.Output('not_allow');});
+menus.AddCommand("옵션설정",async () => {TextTable.Output('not_allow');});
+menus.AddCommand("게임종료",async () => {TextTable.Output('game_exit');  continued = false;})
 // 로비 화면을 출력하는 함수
 function displayLobby() {
     console.clear();
@@ -25,12 +25,12 @@ async function handleUserInput() {
         displayLobby();
         const text = TextTable.FormatText('input');
         const choice = await Input.question(text);
-        if(menus.ExecuteCommand(choice)){
+        if(await menus.ExecuteCommand(choice)){
 
         }else{
             TextTable.Output('wrong_select')
         }
-    await Utils.delay(2000);
+    await Utils.Delay(2000);
 
     }
 }

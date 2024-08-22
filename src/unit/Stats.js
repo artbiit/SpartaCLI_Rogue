@@ -1,4 +1,4 @@
-import MyMath from "../lib/MyMath";
+import MyMath from "../lib/MyMath.js";
 
 class Stats {
     #current_hp = 0;
@@ -80,7 +80,7 @@ class Stats {
 
     #applyAtkRange() {
         this.#atk_range.min_atk = this.#default_atk;
-        this.#atk_range.max_atk = this.#default_atk * (1.0 + this.#atk_rating);
+        this.#atk_range.max_atk = this.#default_atk * (1.0 + this.#atk_rating ) | 0;
     }
 }
 

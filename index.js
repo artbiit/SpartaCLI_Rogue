@@ -7,7 +7,7 @@ async function Start() {
     await TextTable.Load('./resources/TextTable.csv');
     console.log("Table Load Done.");
     console.log("Start Game");
-    await Utils.delay(1000);
+    await Utils.Delay(1000);
     server();
 }
 
