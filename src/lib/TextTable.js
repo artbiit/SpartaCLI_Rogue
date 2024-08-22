@@ -17,7 +17,7 @@ class TextTable extends Singleton {
         .pipe(csv())
         .on('data', (row) => {
           try{
-          this.#textTable[row.id] = row.text.trim().replace(/^"|"$/g, '');
+          this.#textTable[row.id] = row.text.trim().replace(/^"|"$/g, '').replace(/\\n/g, '\n');;
         }catch{
           console.error(row);
         }
@@ -51,8 +51,7 @@ class TextTable extends Singleton {
       return chalk[color](content);
   });
 
-  // \n을 실제 개행 문자로 처리
-  return text.replace(/\\n/g, '\n');
+  return text;
 }
 
 
