@@ -33,17 +33,19 @@ console.log(Utils.FormatTextForConsole(text));
 const battle = async (stage, player, monster) => {
   let logs = [];
 
+  let player_actions_text = player.actions.map(action => {
+    const probabilityWithLuck = (100.0 - (action.probability + player.stats.luck) * 100.0).toFixed(2);
+    return `${TextTable.FormatText(action.name)}(${probabilityWithLuck}%)`;
+}).join(', ');
+
+player_actions_text = TextTable.FormatText('action_info', {actions: player_actions_text});
   while(player.stats.current_hp > 0) {
     console.clear();
     displayStatus(stage, player, monster);
 
     logs.forEach((log) => console.log(log));
 
-    console.log(
-      chalk.green(
-        `\n1. 공격한다 2. 아무것도 하지않는다.`,
-      ),
-    );
+    console.log(player_actions_text);
     const choice =await Input.question('당신의 선택은? ');
 
     // 플레이어의 선택에 따라 다음 행동 처리

@@ -14,6 +14,10 @@ class Unit {
         return this.#stats;
     }
 
+    get actions(){
+        return this.#actions;
+    }
+
     constructor(name = 'UNKNOWN', stats = null){
         this.#name = name;
         this.#stats = (stats === null ? new Stats() : stats);
