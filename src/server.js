@@ -9,7 +9,7 @@ const menus = new  Command();
 menus.AddCommand("시작하기", startGame);
 menus.AddCommand("업적보기", () => {TextTable.Output('not_allow');});
 menus.AddCommand("옵션설정", () => {TextTable.Output('not_allow');});
-menus.AddCommand("게임종료",  () => {continued = false;})
+menus.AddCommand("게임종료", () => {TextTable.Output('game_exit');  continued = false;})
 // 로비 화면을 출력하는 함수
 function displayLobby() {
     console.clear();
