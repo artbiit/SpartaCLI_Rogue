@@ -1,11 +1,14 @@
 import chalk from 'chalk';
-import Unit from './unit/Unit.js';
-import * as Actions from './unit/Action.js';
-import Input from './lib/Input.js';
-import Stats from './unit/Stats.js';
-import MyMath from './lib/MyMath.js';
-import Utils from './lib/Utils.js';
-import TextTable from './lib/TextTable.js';
+import Unit from '../unit/Unit.js';
+import * as Actions from '../unit/Action.js';
+import Input from '../lib/Input.js';
+import Stats from '../unit/Stats.js';
+import MyMath from '../lib/MyMath.js';
+import TextTable from '../lib/TextTable.js';
+import Command from '../lib/Command.js';
+import Utils from '../lib/Utils.js';
+
+const commands = new Command();
 
 function displayStatus(stage, player, monster) {
  let text = TextTable.FormatText('battle_stage_info', {
@@ -32,24 +35,30 @@ console.log(TextTable.FormatTextForConsole(text));
 
 const battle = async (stage, player, monster) => {
   let logs = [];
-
+  let continued = true;
   let player_actions_text = player.actions.map(action => {
     const probabilityWithLuck = (100.0 - (action.probability + player.stats.luck) * 100.0).toFixed(2);
     return `${TextTable.FormatText(action.name)}(${probabilityWithLuck}%)`;
 }).join(', ');
-
 player_actions_text = TextTable.FormatText('action_info', {actions: player_actions_text});
-  while(player.stats.current_hp > 0) {
+
+  while(continued) {
     console.clear();
     displayStatus(stage, player, monster);
-
-    logs.forEach((log) => console.log(log));
-
+    console.log(logs.slice(11 - process.stdout.rows).join("\n"));
     console.log(player_actions_text);
     const choice =await Input.question('당신의 선택은? ');
 
-    // 플레이어의 선택에 따라 다음 행동 처리
-    logs.push(chalk.green(`${choice}를 선택하셨습니다.`));
+    const command_result = await commands.ExecuteCommand(choice, player, monster)
+    if(command_result){
+      logs.push(... command_result.descriptions);
+      command_result.descriptions.forEach( desc => {console.log(desc)});
+      continued = command_result.continue;
+    }else{
+      TextTable.Output('wrong_select');
+    }
+
+    await Utils.Delay(500);
   }
   
 };
@@ -76,11 +85,14 @@ function CreateMonsterStats(stage){
 }
 
 export async function startGame() {
-  console.clear();
-  const player = new Unit('플레이어', CreatePlayerDefaultStats() );
-  player.InsertAction(new Actions.GamblingAction()); //사용자만 도박에 시도할 수 있습니다.
+
   let stage = 1;
 
+const player = new Unit('플레이어', CreatePlayerDefaultStats() );
+player.InsertAction(new Actions.GamblingAction()); //사용자만 도박에 시도할 수 있습니다.
+player.actions.forEach( action => {
+commands.AddCommand(TextTable.FormatText(action.name), action.DoAction);
+});
   while (stage <= 10) {
     const monster = new Unit('몬스터', CreateMonsterStats(stage));
     await battle(stage, player, monster);

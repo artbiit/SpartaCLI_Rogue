@@ -1,8 +1,8 @@
-import {startGame} from "./game.js";
-import TextTable from './lib/TextTable.js';
-import Input from './lib/Input.js';
-import Command from './lib/Command.js';
-import Utils from './lib/Utils.js';
+import {startGame} from "./Game.js";
+import TextTable from '../lib/TextTable.js';
+import Input from '../lib/Input.js';
+import Command from '../lib/Command.js';
+import Utils from '../lib/Utils.js';
 
 let continued = true;
 const menus = new  Command();

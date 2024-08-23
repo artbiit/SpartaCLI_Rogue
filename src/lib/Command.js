@@ -43,8 +43,7 @@ class Command {
         const command = this.#commands.get(key);
         if (command) {
             try {
-              await  command(...args);
-                return true;
+            return await  command(...args);
             } catch (error) {
                 throw new Error(`Error executing command "${key}":`, error);
             }

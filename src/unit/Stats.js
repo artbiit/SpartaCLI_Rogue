@@ -54,18 +54,18 @@ class Stats {
     }
 
     modifyCurrentHP(delta) {
-        this.#current_hp = MyMath.Clamp(this.#current_hp + delta, 0, this.#max_hp);
+        this.#current_hp = MyMath.Clamp(this.#current_hp + delta, 0, this.#max_hp) | 0;
     }
 
     modifyMaxHP(delta) {
-        this.#max_hp = MyMath.Clamp(this.#max_hp + delta, 0);
+        this.#max_hp = MyMath.Clamp(this.#max_hp + delta, 0) | 0;
         if (this.#current_hp > this.#max_hp) {
             this.#current_hp = this.#max_hp;
         }
     }
 
     modifyDefaultAtk(delta) {
-        this.#default_atk = MyMath.Clamp(this.#default_atk + delta, 0);
+        this.#default_atk = MyMath.Clamp(this.#default_atk + delta, 0) | 0;
         this.#applyAtkRange();
     }
 

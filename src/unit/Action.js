@@ -26,7 +26,7 @@ class Action {
         return this._probability;
     }
 
-    DoAction(unit, target_unit){
+    DoAction = (unit, target_unit) =>{
         throw new Error("This is abstract action.");
     }
 }
@@ -43,19 +43,26 @@ function CalcDamage(target_unit, atk){
 
 /** 확률상 성공했는지 검사합니다. */
 function CalcProbability(probability , unit){
-    return MyMath.Random01() < (probability - unit.stats.luck);
+    return MyMath.Random01() > (probability + unit.stats.luck);
 }
 
 class AttackAction extends Action {
     constructor(){
         super("attack_action", 'damage', 0.0);
+        console.log('Action created:', this._description);
     }
 
-    DoAction(unit, target_unit){
+
+    DoAction = (unit, target_unit) =>{
+        let descriptions = [];
+        try{
         const damage = CalcDamage(target_unit, CalcAtk(unit));
         target_unit.stats.modifyCurrentHP(-damage);
-        console.log(TextTable.FormatText(this._description, {unit: unit.name, target_unit: target_unit.name, damage}));
-        return target_unit.stats.current_hp > 0;
+         descriptions.push( TextTable.FormatText(this._description, {unit: unit.name, target_unit: target_unit.name, damage}));
+    }catch(error){
+        console.error(error);
+    }
+        return { continue: target_unit.stats.current_hp > 0, descriptions };
     }
 }
 
@@ -64,22 +71,18 @@ class DoubleAttackAction extends Action {
         super("double_attack_action", 'damage', 0.75);
     }
 
-    DoAction(unit, target_unit){
+    DoAction = (unit, target_unit) => {
+        let descriptions = [];
         if(CalcProbability(this._probability, unit)){
             for(let i = 0; i < 2; i++){
                 const damage = CalcDamage(target_unit, CalcAtk(unit));
-                target_unit.stats.modifyCurrentHP(-damage);
-                console.log(TextTable.FormatText(this._description, {unit: unit.name, target_unit: target_unit.name, damage}));
-
-                if(target_unit.stats.current_hp <= 0){
-                    return false;
-                }
+                target_unit.stats.modifyCurrentHP(-damage);            
+                descriptions.push( TextTable.FormatText(this._description, {unit: unit.name, target_unit: target_unit.name, damage}));
             }
         } else {
-            console.log(TextTable.FormatText(ACTION_FAILED, {action_name: this._name}));
+            descriptions.push( TextTable.FormatText(ACTION_FAILED, {action_name: TextTable.FormatText( this._name)}));
         }
-       
-        return target_unit.stats.current_hp > 0;
+        return{ continue: target_unit.stats.current_hp > 0, descriptions };
     }
 }
 
@@ -88,15 +91,16 @@ class TryHealAction extends Action {
         super('try_heal_action', 'try_heal_result', 0.5);
     }
 
-    DoAction(unit, target_unit){
+    DoAction = (unit, target_unit) =>{
+        let descriptions = [];
         const success = CalcProbability(this._probability, unit);
         const success_text = success ? '성공' : '실패';
         const prev_hp = unit.stats.current_hp;
-        unit.stats.modifyCurrentHP(success ? prev_hp * 1.5 : prev_hp * 0.9);
+        unit.stats.modifyCurrentHP(success ? (unit.stats.max_hp - prev_hp) * 0.5 : prev_hp * -0.1);
         const current_hp = unit.stats.current_hp;
         const text = TextTable.FormatText(this.description, {unit: unit.name, success: success_text, prev_hp, current_hp });
-        console.log(text);
-        return target_unit.stats.current_hp > 0;
+        descriptions.push(text);
+        return { continue: target_unit.stats.current_hp > 0, descriptions };
     }
 }
 
@@ -105,18 +109,19 @@ class GamblingAction extends Action{
         super("gambling_action", 'gambling_result', 0.99);
     }
 
-    DoAction(unit, target_unit){
+    DoAction = (unit, target_unit) =>{
+        let descriptions = [];
         const success = CalcProbability(this._probability, unit);
-        console.log(text);
+        let text = '';
         if(success){
-            TextTable.Output('gambling_success' );
+            text = TextTable.FormatText('gambling_success' );
             target_unit.stats.modifyCurrentHP(Number.MIN_SAFE_INTEGER);
         } else {
-            TextTable.Output('gambling_failed' );
-         //   unit.stats.modifyCurrentHP(Number.MIN_SAFE_INTEGER);
+            text = TextTable.FormatText('gambling_failed' );
          
         }
-        return false;
+        descriptions.push(text);
+        return { continue: target_unit.stats.current_hp > 0, descriptions };
     }
 }
 
