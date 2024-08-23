@@ -31,8 +31,8 @@ class Input {
   }
 
   static async keyInYN(query) {
-    const answer = await this._askQuestion(query);
-    return answer.toLowerCase() === 'y';
+    const answer = (await this._askQuestion(query)).trim(); // 입력값의 공백을 제거
+    return answer === '' || answer.toLowerCase() === '네' || answer.toLowerCase() === 'y';
   }
 
   static async keyInYNStrict(query) {

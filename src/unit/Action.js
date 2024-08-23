@@ -43,26 +43,22 @@ function CalcDamage(target_unit, atk){
 
 /** 확률상 성공했는지 검사합니다. */
 function CalcProbability(probability , unit){
-    return MyMath.Random01() > (probability + unit.stats.luck);
+    return MyMath.CalcProbability(probability + unit.stats.luck);
 }
 
 class AttackAction extends Action {
     constructor(){
         super("attack_action", 'damage', 0.0);
-        console.log('Action created:', this._description);
     }
 
 
     DoAction = (unit, target_unit) =>{
         let descriptions = [];
-        try{
+
         const damage = CalcDamage(target_unit, CalcAtk(unit));
         target_unit.stats.modifyCurrentHP(-damage);
          descriptions.push( TextTable.FormatText(this._description, {unit: unit.name, target_unit: target_unit.name, damage}));
-    }catch(error){
-        console.error(error);
-    }
-        return { continue: target_unit.stats.current_hp > 0, descriptions };
+        return descriptions ;
     }
 }
 
@@ -80,9 +76,9 @@ class DoubleAttackAction extends Action {
                 descriptions.push( TextTable.FormatText(this._description, {unit: unit.name, target_unit: target_unit.name, damage}));
             }
         } else {
-            descriptions.push( TextTable.FormatText(ACTION_FAILED, {action_name: TextTable.FormatText( this._name)}));
+            descriptions.push( TextTable.FormatText(ACTION_FAILED, {unit: unit.name, action_name: TextTable.FormatText( this._name)}));
         }
-        return{ continue: target_unit.stats.current_hp > 0, descriptions };
+        return  descriptions ;
     }
 }
 
@@ -100,7 +96,7 @@ class TryHealAction extends Action {
         const current_hp = unit.stats.current_hp;
         const text = TextTable.FormatText(this.description, {unit: unit.name, success: success_text, prev_hp, current_hp });
         descriptions.push(text);
-        return { continue: target_unit.stats.current_hp > 0, descriptions };
+        return  descriptions ;
     }
 }
 
@@ -121,7 +117,7 @@ class GamblingAction extends Action{
          
         }
         descriptions.push(text);
-        return { continue: target_unit.stats.current_hp > 0, descriptions };
+        return  descriptions ;
     }
 }
 

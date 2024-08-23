@@ -37,7 +37,27 @@ class MyMath{
 
     /** 소수점을 제거하고 반환합니다. */
     static RandomRangeInt(min = Number.MIN_VALUE, max = Number.MAX_VALUE){
-        return this.RandomRange(min, max) | 0;
+        return this.Floor( this.RandomRange(min, max));
+    }
+
+    /** 확률상 성공했는지 검사합니다. */
+    static CalcProbability(probability){
+    return this.Random01() > probability ;
+}
+
+    /**배열 중 하나의 요소를 반환합니다. */
+    static RandomPick(array){
+        return array[this.RandomPickIndex(array)];
+    }
+
+        /**배열 중 하나의 인덱스를 반환합니다. */
+    static RandomPickIndex(array){
+        return this.RandomRangeInt(0, array.length);
+    }
+
+    /** 소수점을 제거합니다. */
+    static Floor(num){
+        return num | 0;
     }
 }
 
