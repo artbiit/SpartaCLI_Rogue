@@ -108,11 +108,10 @@ player_actions_text = TextTable.FormatText('action_info', {actions: player_actio
     displayStatus(stage, player, monster);
     console.log(logs.slice(11 - process.stdout.rows).join("\n"));
     console.log(player_actions_text);
-    const choice =await Input.question('당신의 선택은? ');
+    const choice =await Input.question(TextTable.FormatText('question_action'));
 
     const command_result = await commands.ExecuteCommand(choice, player, monster)
-    if(command_result){
-      try{
+    if(command_result !== false){
       logs.push(... command_result);
       command_result.forEach( desc => {console.log(desc)});
       await Utils.Delay(500);
@@ -125,17 +124,12 @@ player_actions_text = TextTable.FormatText('action_info', {actions: player_actio
       if(player.stats.current_hp <= 0){//패배
         break;
       }
-    }catch(error){
-      console.error(error);
-      await Input.question("...>");
-    }
 
     }else{
       TextTable.Output('wrong_select');
     }
     await Utils.Delay(500);
-  }
-  
+  }//while
 };
 
 const elixirScenario = async (player) =>{
@@ -146,7 +140,7 @@ const elixirScenario = async (player) =>{
     TextTable.Output('get_elixir', { percent });
 
     if (await Input.keyInYN(TextTable.FormatText('use_question'))) {
-      const recovery_hp = MyMath.Floor( player.stats.max_hp * percent);
+      const recovery_hp = MyMath.Floor( player.stats.max_hp * percent * 0.01);
       player.stats.modifyCurrentHP(recovery_hp);
       TextTable.Output('used_elixir', {percent:org_percent, recovery_hp, current_hp: player.stats.current_hp});
     } else {
@@ -210,9 +204,9 @@ const elixirScenario = async (player) =>{
         await Utils.Delay(500);
       }
     }
-
-  }
-  await Input.question(TextTable.FormatText( 'any_key'));
+    await Input.question(TextTable.FormatText( 'any_key'));
+  }//if
+ 
 };
 
 const  victoryScenario = async (player, stage) => {
@@ -296,17 +290,18 @@ function CreateMonsterStats(stage){
 export async function startGame() {
 
   let stage = 1;
-
+  const last_stage = 10;
 const player = new Unit(Settings.player_name, CreatePlayerDefaultStats() );
 player.InsertAction(new Actions.GamblingAction()); //사용자만 도박에 시도할 수 있습니다.
 player.actions.forEach( action => {
 commands.AddCommand(TextTable.FormatText(action.name), action.DoAction);
 });
-  while (stage <= 10) {
+
+  while (stage <= last_stage) {
     try{
     console.clear();
     let monster_name = '';
-    if(stage === 10){
+    if(stage === last_stage){
       monster_name = Settings.boss_monster_name;
     }else{
       monster_name = MyMath.RandomPick(Settings.normal_monster_names);
@@ -321,19 +316,23 @@ commands.AddCommand(TextTable.FormatText(action.name), action.DoAction);
     displayStatus(stage,player,monster);
     TextTable.Output(victory ? 'victory' : 'lose', {player: player.name, monster: monster.name});
       if(victory){
-       await victoryScenario(player, stage);
-       displayStatus(stage,player,monster);
-       await elixirScenario(player);
-      }else{
-        await Input.question(TextTable.FormatText('back_to_lobby'));
-        break;
+        if(stage !== last_stage){
+          await victoryScenario(player, stage);
+          displayStatus(stage,player,monster);
+          await elixirScenario(player);
+        }else{
+          TextTable.Output('clear_all_stage', {boss_monster_name: Settings.boss_monster_name});
+          await Utils.Delay(1000);
+        }
+       break;
       }
       
     }catch(error){
       console.error(error);
-      await Input.question();
+      await Input.question('');
     }
       stage++;
     
-  }
+  }//while
+  await Input.question(TextTable.FormatText('back_to_lobby'));
 }

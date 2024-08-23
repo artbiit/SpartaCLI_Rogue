@@ -25,12 +25,12 @@ async function handleUserInput() {
         displayLobby();
         const text = TextTable.FormatText('input');
         const choice = await Input.question(text);
-        if(await menus.ExecuteCommand(choice)){
+        if(await menus.ExecuteCommand(choice) !== false){
 
         }else{
             TextTable.Output('wrong_select')
         }
-    await Utils.Delay(2000);
+    await Utils.Delay(1000);
 
     }
 }

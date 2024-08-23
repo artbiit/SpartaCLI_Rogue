@@ -64,7 +64,7 @@ class AttackAction extends Action {
 
 class DoubleAttackAction extends Action {
     constructor(){
-        super("double_attack_action", 'damage', 0.75);
+        super("double_attack_action", 'damage', 0.55);
     }
 
     DoAction = (unit, target_unit) => {
@@ -84,7 +84,7 @@ class DoubleAttackAction extends Action {
 
 class TryHealAction extends Action {
     constructor(){
-        super('try_heal_action', 'try_heal_result', 0.5);
+        super('try_heal_action', 'try_heal_result', 0.75);
     }
 
     DoAction = (unit, target_unit) =>{

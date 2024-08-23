@@ -21,8 +21,10 @@ lose, "{red:{{monster}}}는 {yellow:{{player}}}를 도륙내었습니다..."
 back_to_lobby, "{grey:로비로 복귀하려면 엔터를 눌러주세요.}"
 get_elixir, "{green:축하드립니다!} {yellow:전설의 비약({{percent}}%)}을 획득 하였습니다. 사용시 전체 체력의 {{percent}}%만큼 회복하며, 거절시 임의의 버프를 얻습니다."
 use_question, "사용 하시겠습니까? (네) : "
-used_elixir, "{yellow:전설의 비약({{percent}}%)}을 사용하여 체력을 {yellow:{{recovery}}}만큼 회복하여 체력이 {{current_hp}}가 되었습니다.";
+used_elixir, "{yellow:전설의 비약({{percent}}%)}을 사용하여 체력을 {yellow:{{recovery_hp}}}만큼 회복하여 체력이 {{current_hp}}가 되었습니다.";
 sell_elixir, "{yellow:전설의 비약({{percent}}%)}을 {grey:흡수}하여 이로운 효과를 얻었습니다.:"
 buff, "{blue:{{stat_name}}}의 수치가 {cyan:{{value}}}만큼 증가했습니다."
 heal, "체력이 {{value}}만큼 회복 되었습니다. | {grey:{{current_hp}}}"
-any_key, "계속하려면 아무키나 눌러주세요"
+any_key, "{grey: 계속하려면 아무키나 눌러주세요. )}"
+question_action, "당신의 선택은?) "
+clear_all_stage, "{redBright:  _______ _                 _______             _           _    _             _  }\n{redBright: |__   __(_)               |__   __|           | |         | |  | |           | | }\n{redBright:    | |   _  __ _ _ __ ___     | | ___  __ _  __| | ___ _ __| |__| | __ _ _ __ | | }\n{redBright:    | |  | |/ _` | '__/ _ \    | |/ _ \/ _` |/ _` |/ _ \ '__|  __  |/ _` | '_ \| | }\n{redBright:    | |  | | (_| | | |  __/    | |  __/ (_| | (_| |  __/ |  | |  | | (_| | | | |_| }\n{redBright:    |_|  |_|\__,_|_|  \___|    |_|\___|\__,_|\__,_|\___|_|  |_|  |_|\__,_|_| |_(_) }\n\n\n}\n{yellowBright:용사여, 그대는 마침내 {{boss_monster_name}}를 무찌르고}\n{yellowBright:어둠의 세력을 물리쳤습니다!}\n\n{greenBright:전설 속 영웅이여, 그대의 이름은 영원히 기억될 것입니다!!}"
