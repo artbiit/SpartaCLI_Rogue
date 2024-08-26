@@ -374,7 +374,7 @@ export async function startGame() {
   achievements.gameStart();
 
   let stage = 1;
-  const last_stage = 1;
+  const last_stage = 10;
   const player = new Unit(Settings.player_name, CreatePlayerDefaultStats());
   player.InsertAction(new Actions.GamblingAction()); //사용자만 도박에 시도할 수 있습니다.
   player.actions.forEach((action) => {
@@ -416,11 +416,11 @@ export async function startGame() {
       }
     } else {
       achievements.lose();
-      break;
+      stage = last_stage;
     }
     achievements.save();
     stage++;
   } //while
-  achievements.save();
+
   await Input.question(TextTable.FormatText('back_to_lobby'));
 }
