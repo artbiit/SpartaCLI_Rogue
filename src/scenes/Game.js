@@ -11,51 +11,88 @@ import EventBus from '../lib/eventBus.js';
 const commands = new Command();
 
 const achievements = {
+  /**
+   * 몬스터가 처치될 때 호출됩니다.
+   * @param {string} monsterType 몬스터의 종류
+   */
   monsterKilled: (monsterType) => {
     EventBus.emit('monsterKilled', monsterType);
   },
 
+  /**
+   * 몬스터를 조우할 때 호출됩니다.
+   * @param {string} monsterType 몬스터의 종류
+   */
   monsterEncounterd: (monsterType) => {
     EventBus.emit('monsterEncountered', monsterType);
   },
 
+  /**
+   * 보스에게서 승리했을 때 호출됩니다.
+   */
   victory: () => {
     EventBus.emit('victory_count');
   },
 
+  /**
+   * 게임 시작 시 호출됩니다.
+   */
   gameStart: () => {
     EventBus.emit('start_count');
   },
 
+  /**
+   * 데미지를 가했을 때 호출됩니다.
+   * @param {number} dmg 가한 데미지 양
+   */
   dmgDealt: (dmg) => {
     EventBus.emit('total_dmg_dealt', dmg);
   },
 
+  /**
+   * 데미지를 받았을 때 호출됩니다.
+   * @param {number} dmg 받은 데미지 양
+   */
   dmgTaken: (dmg) => {
     EventBus.emit('total_dmg_taken', dmg);
   },
 
+  /**
+   * 치유를 받았을 때 호출됩니다.
+   * @param {number} heal 치유량
+   */
   healTaken: (heal) => {
     EventBus.emit('total_heal', heal);
   },
 
-  victory: () => {
-    EventBus.emit('victory_count');
-  },
-
+  /**
+   * 패배했을 때 호출됩니다.
+   */
   lose: () => {
     EventBus.emit('lose_count');
   },
 
+  /**
+   * 엘릭서를 수집했을 때 호출됩니다.
+   */
   elixirCollected: () => {
     EventBus.emit('collect_elixir');
   },
 
+  /**
+   * 업적을 저장할 때 호출됩니다.
+   */
   save: () => {
     EventBus.emit('achievementsSave');
   },
 };
 
+/**
+ * 현재 스테이지, 플레이어, 몬스터의 상태를 출력합니다.
+ * @param {number} stage 현재 스테이지 번호
+ * @param {Unit} player 플레이어 유닛
+ * @param {Unit} monster 몬스터 유닛
+ */
 function displayStatus(stage, player, monster) {
   console.clear();
   let text = TextTable.FormatText('battle_stage_info', {
@@ -79,6 +116,12 @@ function displayStatus(stage, player, monster) {
   console.log(TextTable.FormatTextForConsole(text));
 }
 
+/**
+ * 몬스터가 행동을 수행합니다.
+ * @param {Unit} player 플레이어 유닛
+ * @param {Unit} monster 몬스터 유닛
+ * @returns {Array<string>} 몬스터 행동 결과
+ */
 const monsterAction = (player, monster) => {
   const playerHp = player.stats.current_hp;
   const monsterHp = monster.stats.current_hp;
@@ -90,23 +133,18 @@ const monsterAction = (player, monster) => {
   if (playerHp <= monsterHp) {
     if (playerHp <= monsterMaxAtk) {
       if (playerDefense < 0.2) {
-        // 플레이어 방어력이 낮으면 일반 공격
         actionResult = monster.actions[0].DoAction(monster, player);
       } else {
-        // 방어력이 높다면 몬스터는 회복을 시도
         actionResult = monster.actions[2].DoAction(monster, player);
       }
     } else {
       if (monsterHp - playerHp >= monsterMaxAtk) {
         if (Math.random() < 0.8) {
-          // 체력 차이가 크면 연속 공격 시도
           actionResult = monster.actions[1].DoAction(monster, player);
         } else {
-          // 낮은 확률로 회복을 시도
           actionResult = monster.actions[2].DoAction(monster, player);
         }
       } else {
-        // 체력 차이가 크지 않으면 플레이어의 행동을 예측하여 공격 또는 회복
         if (Math.random() < 0.6) {
           actionResult = monster.actions[0].DoAction(monster, player);
         } else {
@@ -117,30 +155,25 @@ const monsterAction = (player, monster) => {
   } else {
     if (monsterHp <= monster.stats.max_hp * 0.2) {
       if (Math.random() < 0.5) {
-        // 회복 대신 반격을 시도할 확률
         actionResult = monster.actions[0].DoAction(monster, player);
       } else {
         actionResult = monster.actions[1].DoAction(monster, player);
       }
     } else if (playerHp <= monsterMaxAtk) {
       if (Math.random() < 0.7) {
-        // 플레이어의 체력 회복 가능성을 고려하여 연속 공격 시도
         actionResult = monster.actions[1].DoAction(monster, player);
       } else {
         actionResult = monster.actions[0].DoAction(monster, player);
       }
     } else {
       if (playerDefense < 0.3) {
-        // 플레이어의 방어력이 낮으면 일반 공격
         actionResult = monster.actions[0].DoAction(monster, player);
       } else {
-        // 그렇지 않으면 연속 공격
         actionResult = monster.actions[1].DoAction(monster, player);
       }
     }
   }
 
-  //업적 : 받은 데미지
   const dmgTaken = playerHp - player.stats.current_hp;
   if (dmgTaken !== 0) {
     achievements.dmgTaken(dmgTaken);
@@ -149,6 +182,12 @@ const monsterAction = (player, monster) => {
   return actionResult;
 };
 
+/**
+ * 전투를 수행하는 함수입니다.
+ * @param {number} stage 현재 스테이지 번호
+ * @param {Unit} player 플레이어 유닛
+ * @param {Unit} monster 몬스터 유닛
+ */
 const battle = async (stage, player, monster) => {
   let logs = [];
   let player_actions_text = player.actions
@@ -178,13 +217,11 @@ const battle = async (stage, player, monster) => {
         console.log(desc);
       });
 
-      // 업적 : 회복량
       let delta = player.stats.current_hp - prev_player_hp;
       if (delta > 0) {
         achievements.healTaken(delta);
       }
 
-      // 업적 : 준 데미지
       delta = prev_monster_hp - monster.stats.current_hp;
       if (delta !== 0) {
         achievements.dmgDealt(delta);
@@ -192,7 +229,6 @@ const battle = async (stage, player, monster) => {
 
       await Utils.Delay(500);
       if (monster.stats.current_hp <= 0) {
-        //승리
         break;
       }
       const monster_result = monsterAction(player, monster);
@@ -201,19 +237,21 @@ const battle = async (stage, player, monster) => {
         console.log(desc);
       });
       if (player.stats.current_hp <= 0) {
-        //패배
         break;
       }
     } else {
       TextTable.Output('wrong_select');
     }
     await Utils.Delay(500);
-  } //while
+  }
 };
 
+/**
+ * 엘릭서 시나리오를 처리하는 함수입니다.
+ * @param {Unit} player 플레이어 유닛
+ */
 const elixirScenario = async (player) => {
   if (MyMath.CalcProbability(0.9)) {
-    //업적 : 엘릭서 수집 횟수
     achievements.elixirCollected();
     let percent = MyMath.RandomRangeInt(10, 31) * 1.0;
     const org_percent = percent;
@@ -231,10 +269,9 @@ const elixirScenario = async (player) => {
       const statsToUpgrade = ['max_hp', 'default_atk', 'atk_rating', 'defense_rating', 'luck'];
       const upgrades = {};
 
-      // 각각의 스탯에 대해 성장 비율을 분배
       statsToUpgrade.forEach((stat, index) => {
         if (index === statsToUpgrade.length - 1) {
-          upgrades[stat] = percent; // 마지막 스탯은 남은 전체 비율 할당
+          upgrades[stat] = percent;
         } else {
           const allocation = MyMath.RandomRangeInt(0, percent + 1);
           upgrades[stat] = allocation;
@@ -242,7 +279,6 @@ const elixirScenario = async (player) => {
         }
       });
 
-      // 스탯 변경값 추적
       let changes = {};
 
       const maxHpChange = MyMath.Floor(player.stats.max_hp * (upgrades['max_hp'] / 100.0));
@@ -279,7 +315,6 @@ const elixirScenario = async (player) => {
         changes['LUCK'] = luckChange.toFixed(2);
       }
 
-      // 변화된 스탯들을 출력
       TextTable.Output('sell_elixir', { percent: org_percent });
       for (const [key, value] of Object.entries(changes)) {
         TextTable.Output('buff', {
@@ -290,12 +325,16 @@ const elixirScenario = async (player) => {
       }
     }
     await Input.question(TextTable.FormatText('any_key'));
-  } //if
+  }
 };
 
+/**
+ * 승리 시나리오를 처리하는 함수입니다.
+ * @param {Unit} player 플레이어 유닛
+ * @param {number} stage 현재 스테이지 번호
+ */
 const victoryScenario = async (player, stage) => {
-  // 전투 승리 보상
-  const maxHpIncrease = MyMath.Floor(player.stats.max_hp * MyMath.RandomRange(0.01, 0.1) * stage); // 스테이지에 비례한 최대 체력 증가
+  const maxHpIncrease = MyMath.Floor(player.stats.max_hp * MyMath.RandomRange(0.01, 0.1) * stage);
   player.stats.modifyMaxHP(maxHpIncrease);
   TextTable.Output('buff', { stat_name: 'MAX_HP', value: maxHpIncrease });
   await Utils.Delay(500);
@@ -307,12 +346,12 @@ const victoryScenario = async (player, stage) => {
         case 0:
           statIncrease = Math.round(
             player.stats.default_atk * stage * MyMath.RandomRange(0.1, 0.2),
-          ); // 공격력 증가
+          );
           statName = 'MIN_ATK';
           player.stats.modifyDefaultAtk(statIncrease);
           break;
         case 1:
-          statIncrease = stage * MyMath.RandomRange(0.01, 0.1); // 공격 등급 증가
+          statIncrease = stage * MyMath.RandomRange(0.01, 0.1);
           const tmp = player.stats.atk_range.max_atk;
           statName = 'MAX_ATK';
           player.stats.modifyAtkRating(statIncrease);
@@ -322,13 +361,13 @@ const victoryScenario = async (player, stage) => {
           }
           break;
         case 2:
-          statIncrease = MyMath.RandomRange(0.01, 0.02); // 방어 등급 증가
+          statIncrease = MyMath.RandomRange(0.01, 0.02);
           statName = 'DEF';
           player.stats.modifyDefenseRating(statIncrease);
           statIncrease = statIncrease.toFixed(2);
           break;
         case 3:
-          statIncrease = MyMath.RandomRange(0.01, 0.015); // 운 증가
+          statIncrease = MyMath.RandomRange(0.01, 0.015);
           statName = 'LUCK';
           player.stats.modifyLuck(statIncrease);
           statIncrease = statIncrease.toFixed(2);
@@ -339,8 +378,7 @@ const victoryScenario = async (player, stage) => {
 
       await Utils.Delay(500);
     }
-  } //for
-  //체력 회복
+  }
   const currentHpIncrease = MyMath.Floor((player.stats.max_hp - player.stats.current_hp) * 0.5);
   player.stats.modifyCurrentHP(currentHpIncrease);
   TextTable.Output('heal', { value: currentHpIncrease, current_hp: player.stats.current_hp });
@@ -349,6 +387,10 @@ const victoryScenario = async (player, stage) => {
   await Input.question(TextTable.FormatText('any_key'));
 };
 
+/**
+ * 기본 플레이어 스탯을 생성하는 함수입니다.
+ * @returns {Stats} 생성된 플레이어 스탯
+ */
 function CreatePlayerDefaultStats() {
   const max_hp = MyMath.RandomRangeInt(100, 121);
   const default_atk = MyMath.RandomRangeInt(5, 10);
@@ -359,6 +401,11 @@ function CreatePlayerDefaultStats() {
   return stats;
 }
 
+/**
+ * 몬스터의 스탯을 생성하는 함수입니다.
+ * @param {number} stage 현재 스테이지 번호
+ * @returns {Stats} 생성된 몬스터 스탯
+ */
 function CreateMonsterStats(stage) {
   const max_hp = MyMath.RandomRangeInt(21 + 10 * stage, 20 + 15 * stage);
   const default_atk = MyMath.RandomRangeInt(stage * 3, stage * 3 + stage * 2);
@@ -369,14 +416,16 @@ function CreateMonsterStats(stage) {
   return stats;
 }
 
+/**
+ * 게임을 시작하는 함수입니다.
+ */
 export async function startGame() {
-  //업적 : 게임 시작 횟수
   achievements.gameStart();
 
   let stage = 1;
   const last_stage = 10;
   const player = new Unit(Settings.player_name, CreatePlayerDefaultStats());
-  player.InsertAction(new Actions.GamblingAction()); //사용자만 도박에 시도할 수 있습니다.
+  player.InsertAction(new Actions.GamblingAction());
   player.actions.forEach((action) => {
     commands.AddCommand(TextTable.FormatText(action.name), action.DoAction);
   });
@@ -389,14 +438,12 @@ export async function startGame() {
     } else {
       monster_name = MyMath.RandomPick(Settings.normal_monster_names);
     }
-    //업적 : 몬스터 조우
     achievements.monsterEncounterd(monster_name);
     const monster = new Unit(monster_name, CreateMonsterStats(stage));
     TextTable.Output('encounter', { name: monster_name });
     await Utils.Delay(750);
     await battle(stage, player, monster);
 
-    // 스테이지 클리어 및 게임 종료 조건
     const victory = player.stats.current_hp > 0;
     displayStatus(stage, player, monster);
     TextTable.Output(victory ? 'victory' : 'lose', {
@@ -420,7 +467,7 @@ export async function startGame() {
     }
     achievements.save();
     stage++;
-  } //while
+  }
 
   await Input.question(TextTable.FormatText('back_to_lobby'));
 }

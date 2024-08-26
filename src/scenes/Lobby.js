@@ -10,6 +10,9 @@ let continued = true;
 let menus = null;
 let lobbyText = '';
 
+/**
+ * 로비 명령어를 설정하는 함수입니다.
+ */
 function setCommand() {
   if (menus === null) {
     menus = new Command();
@@ -31,12 +34,18 @@ function setCommand() {
 
   lobbyText = TextTable.FormatText('lobby_menu', { menu_list: Array.from(menus.keys).join('\n') });
 }
-// 로비 화면을 출력하는 함수
+
+/**
+ * 로비 화면을 출력하는 함수입니다.
+ */
 function displayLobby() {
   console.clear();
   console.log(lobbyText);
 }
 
+/**
+ * 업적을 조회하는 함수입니다.
+ */
 async function viewAchievements() {
   console.clear();
   const delay = 500;
@@ -91,7 +100,9 @@ async function viewAchievements() {
   await Input.question(TextTable.FormatText('any_key'));
 }
 
-// 유저 입력을 받아 처리하는 함수
+/**
+ * 유저 입력을 받아 처리하는 함수입니다.
+ */
 async function handleUserInput() {
   while (continued) {
     displayLobby();
@@ -105,7 +116,9 @@ async function handleUserInput() {
   }
 }
 
-// 게임 시작 함수
+/**
+ * 게임을 시작하는 함수입니다.
+ */
 async function start() {
   continued = true;
   setCommand();

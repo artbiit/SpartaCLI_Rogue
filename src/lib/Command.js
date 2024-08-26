@@ -1,3 +1,6 @@
+/**
+ * 명령어와 그에 따른 콜백을 관리하는 클래스입니다.
+ */
 class Command {
   #commands = null;
 
@@ -5,19 +8,28 @@ class Command {
     this.#commands = new Map();
   }
 
+  /** @returns {Map} 명령어와 콜백이 저장된 맵 */
   get commands() {
     return this.#commands;
   }
 
+  /** @returns {Iterator} 명령어의 키들 */
   get keys() {
     return this.#commands.keys();
   }
 
+  /** @returns {Iterator} 콜백 함수들 */
   get callbacks() {
     return this.#commands.values();
   }
 
-  /** 명령어를 저장합니다. */
+  /**
+   * 명령어를 추가합니다.
+   * @param {string} key 명령어 키
+   * @param {Function} callback 명령어 실행 시 호출될 콜백 함수
+   * @returns {boolean} 추가 성공 여부
+   * @throws {Error} 유효하지 않은 키나 콜백 함수일 경우 예외를 발생시킵니다.
+   */
   AddCommand(key, callback) {
     if (typeof key !== 'string' || key.trim() === '') {
       throw new Error('Key must be a non-empty string');
@@ -29,7 +41,11 @@ class Command {
     return true;
   }
 
-  /** 명령어를 제거합니다. */
+  /**
+   * 명령어를 제거합니다.
+   * @param {string} key 제거할 명령어 키
+   * @returns {boolean} 제거 성공 여부
+   */
   RemoveCommand(key) {
     if (!this.#commands.has(key)) {
       return false;
@@ -38,7 +54,14 @@ class Command {
     return true;
   }
 
-  /** 특정 인덱스에 명령어를 삽입합니다. */
+  /**
+   * 특정 인덱스에 명령어를 삽입합니다.
+   * @param {string} key 명령어 키
+   * @param {Function} callback 명령어 실행 시 호출될 콜백 함수
+   * @param {number} index 삽입할 인덱스 위치
+   * @returns {boolean} 삽입 성공 여부
+   * @throws {Error} 유효하지 않은 키, 콜백 함수, 또는 인덱스일 경우 예외를 발생시킵니다.
+   */
   InsertCommandAt(key, callback, index) {
     if (typeof key !== 'string' || key.trim() === '') {
       throw new Error('Key must be a non-empty string');
@@ -65,7 +88,13 @@ class Command {
     return true;
   }
 
-  /** 해당 명령어를 실행합니다. */
+  /**
+   * 주어진 키의 명령어를 실행합니다.
+   * @param {string} key 실행할 명령어 키
+   * @param {...any} args 콜백 함수에 전달할 인수들
+   * @returns {Promise<*>} 콜백 함수의 반환 값
+   * @throws {Error} 명령어 실행 중 발생한 예외를 전달합니다.
+   */
   async ExecuteCommand(key, ...args) {
     const command = this.#commands.get(key);
     if (command) {
@@ -74,8 +103,6 @@ class Command {
       } catch (error) {
         throw new Error(`Error executing command "${key}":`, error);
       }
-    } else {
-      //  throw new Error(`Command with key "${key}" not found.`);
     }
     return false;
   }

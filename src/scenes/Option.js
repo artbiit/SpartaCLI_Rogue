@@ -16,12 +16,17 @@ let monsterChangeOptionListText = '';
 
 let defaultBossName = '';
 
+/**
+ * 옵션 메뉴를 화면에 출력하는 함수입니다.
+ */
 function displayOption(){
     console.clear();
     console.log(selectOptionText);
 }
 
-
+/**
+ * 플레이어 이름을 변경하는 함수입니다.
+ */
 async function changePlayerName() {
     let newName = await Input.question(changePlayerNameText);
     if(newName == ''){
@@ -31,6 +36,9 @@ async function changePlayerName() {
     TextTable.Output('option_changed_player_name', {new_name : newName});
 }
 
+/**
+ * 보스 이름을 변경하는 함수입니다.
+ */
 async function changeBossName(){
     const prev_name = Settings.boss_monster_name;
     let newName = await Input.question(TextTable.FormatText('option_boss_name_question', {prev_name: Settings.boss_monster_name, default_name: defaultBossName}));
@@ -41,7 +49,10 @@ async function changeBossName(){
     TextTable.Output('option_changed_player_name', {new_name : newName, prev_name});
 }
 
-async function  addMonster() {
+/**
+ * 새로운 몬스터를 추가하는 함수입니다.
+ */
+async function addMonster() {
     const text = TextTable.FormatText('option_monster_add_question');
     const new_name = await Input.question(text);
 
@@ -53,7 +64,10 @@ async function  addMonster() {
     }
 }
 
-async function  removeMonster() {
+/**
+ * 몬스터를 제거하는 함수입니다.
+ */
+async function removeMonster() {
     console.clear();
     const text = TextTable.FormatText('option_monster_remove_question', {monster_list : Settings.normal_monster_names.join("\n")});
     const name = await Input.question(text);
@@ -67,12 +81,14 @@ async function  removeMonster() {
     }
 }
 
-async function  changeMonster() {
+/**
+ * 몬스터의 이름을 변경하는 함수입니다.
+ */
+async function changeMonster() {
     console.clear();
     let text = TextTable.FormatText('option_monster_change_question', {monster_list : Settings.normal_monster_names.join("\n")});
     let name = await Input.question(text);
     let index = Settings.normal_monster_names.findIndex(monsterName => monsterName === name);
-
 
     if(index === -1){
         TextTable.Output('wrong_select');
@@ -86,11 +102,12 @@ async function  changeMonster() {
         }else{
             TextTable.Output('wrong_select');
         }
-
     }
 }
 
-
+/**
+ * 몬스터와 관련된 옵션을 변경하는 함수입니다.
+ */
 async function changeMonsters() {
     console.clear();
     TextTable.Output('option_monster_list', {monster_list: Settings.normal_monster_names.join("\n"), monster_options : monsterChangeOptionListText});
@@ -104,6 +121,9 @@ async function changeMonsters() {
     }
 }
 
+/**
+ * 옵션 메뉴 명령어를 설정하는 함수입니다.
+ */
 function setCommands(){
     if(selectOptions === null){
         selectOptions = new  Command();
@@ -126,30 +146,30 @@ function setCommands(){
         monsterChangeOptions.AddCommand(TextTable.FormatText('option_monster_change'), changeMonster);
         monsterChangeOptionListText = Array.from(monsterChangeOptions.keys).join("\n");    
     }
-    }
+}
 
+/**
+ * 옵션 메뉴를 시작하는 함수입니다.
+ */
 async function Start() {
     continued = true;
     try{
-    setCommands();
+        setCommands();
         while(continued){
             displayOption();
             const text = TextTable.FormatText('input');
             const choice = await Input.question(text);
-            if(await selectOptions.ExecuteCommand(choice) !== false ){
+            if(await selectOptions.ExecuteCommand(choice) !== false){
     
             }else{
                 TextTable.Output('wrong_select')
             }
-        await Utils.Delay(1000);
-    
+            await Utils.Delay(1000);
         }
     }catch(error){
         console.error(error);
         await Input.question('');
     }
 }
-
-
 
 export default Start;
