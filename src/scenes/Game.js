@@ -6,7 +6,7 @@ import MyMath from '../lib/MyMath.js';
 import TextTable from '../lib/TextTable.js';
 import Command from '../lib/Command.js';
 import Utils from '../lib/Utils.js';
-import Settings from '../../resources/Settings.json'  assert { type: 'json' };
+import Settings from '../lib/Settings.js';
 
 const commands = new Command();
 

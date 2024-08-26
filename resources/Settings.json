@@ -1,5 +1,11 @@
 {
-    "player_name" : "플레이어",
-    "normal_monster_names" : ["고블린", "슬라임", "스켈레톤", "가고일", "혼령"],
-    "boss_monster_name" : "마왕"
+  "player_name": "플레이어",
+  "normal_monster_names": [
+    "고블린",
+    "슬라임",
+    "스켈레톤",
+    "가고일",
+    "혼령"
+  ],
+  "boss_monster_name": "마왕"
 }

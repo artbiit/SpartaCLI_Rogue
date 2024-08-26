@@ -9,7 +9,7 @@ async function Start() {
     console.log("Table Load Done.");
     console.log("Start Game");
     await Utils.Delay(1000);
-    server();
+    await server();
 }
 
 Start();
