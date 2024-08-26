@@ -350,10 +350,10 @@ const victoryScenario = async (player, stage) => {
 };
 
 function CreatePlayerDefaultStats() {
-  const max_hp = 100;
-  const default_atk = 6;
-  const atk_rating = 0.5;
-  const defense_rating = 0.0;
+  const max_hp = MyMath.RandomRangeInt(100, 121);
+  const default_atk = MyMath.RandomRangeInt(5, 10);
+  const atk_rating = MyMath.RandomRange(0.4, 0.6);
+  const defense_rating = MyMath.RandomRange(0.0, 0.011);
   const luck = 0.0;
   const stats = new Stats(max_hp, default_atk, atk_rating, defense_rating, luck);
   return stats;
@@ -374,7 +374,7 @@ export async function startGame() {
   achievements.gameStart();
 
   let stage = 1;
-  const last_stage = 10;
+  const last_stage = 1;
   const player = new Unit(Settings.player_name, CreatePlayerDefaultStats());
   player.InsertAction(new Actions.GamblingAction()); //사용자만 도박에 시도할 수 있습니다.
   player.actions.forEach((action) => {
@@ -416,9 +416,11 @@ export async function startGame() {
       }
     } else {
       achievements.lose();
+      break;
     }
     achievements.save();
     stage++;
   } //while
+  achievements.save();
   await Input.question(TextTable.FormatText('back_to_lobby'));
 }
