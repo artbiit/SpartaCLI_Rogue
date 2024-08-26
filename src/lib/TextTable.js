@@ -83,4 +83,5 @@ class TextTable extends Singleton {
 }
 
 
-export default new TextTable();
+const textTable = new TextTable();
+export default  textTable;
